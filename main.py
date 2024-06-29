@@ -20,22 +20,16 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
-        # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
-        if 'Fecha' in df.columns:
-            df_filt = df[df['Fecha'].astype(str).str.contains('01/01', na=False)]
-        else:
-            st.warning('No se encontró la columna "Fecha" en el archivo.')
-
         # Dividir los montos en cuotas antes de sumarlos
         def sumar_montos_cuotas(row):
             monto = row.iloc[10]  # Columna K
             cuotas = int(row.iloc[7].split('/')[1])  # Columna H
             return monto / cuotas
 
-        df_filt['Monto'] = df_filt.apply(sumar_montos_cuotas, axis=1)
+        df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
 
-        # Obtener la columna de montos filtrada
-        montos = df_filt['Monto']
+        # Obtener la columna de montos
+        montos = df['Monto']
 
         # Filtrar y sumar los montos positivos y registrar los negativos como abonos o reversos
         suma_positivos = montos[montos > 0].sum()
@@ -58,8 +52,8 @@ if archivo_excel is not None:
         st.write(f'Monto restante disponible: {monto_restante:.2f}')
 
         # Generar gráfico de gastos por categoría con Plotly
-        if 'Categoria' in df_filt.columns:
-            fig = px.bar(df_filt, x='Categoria', y='Monto', title='Gastos por Categoría')
+        if 'Categoria' in df.columns:
+            fig = px.bar(df, x='Categoria', y='Monto', title='Gastos por Categoría')
             st.plotly_chart(fig)
         else:
             st.warning('No se encontró la columna de Categoría en el archivo.')
