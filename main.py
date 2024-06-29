@@ -14,19 +14,19 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 if archivo_excel is not None:
     try:
         # Leer el archivo Excel con el motor predeterminado (xlrd)
-        df = pd.read_excel(archivo_excel)
+        df = pd.read_excel(archivo_excel, skiprows=18)  # Saltar las primeras 18 filas
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
         st.write(df.head())
 
         # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
-        df_filt = df[df['Fecha'].str.contains('01/01', na=False)]
+        df_filt = df[df.iloc[:, 7].astype(str).str.contains('01/01', na=False)]
 
         # Dividir los montos en cuotas antes de sumarlos
         def sumar_montos_cuotas(row):
-            monto = row['Monto']
-            cuotas = row['Cuotas']
+            monto = row.iloc[10]  # Columna K
+            cuotas = int(row.iloc[7].split('/')[1])  # Columna H
             return monto / cuotas
 
         df_filt['Monto'] = df_filt.apply(sumar_montos_cuotas, axis=1)
