@@ -35,12 +35,12 @@ if archivo_excel is not None:
         st.write(f'Cupo Disponible: {cupo_disponible:.2f}')
 
         # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
-        df_filt = df[df.iloc[:, 7].astype(str).str.contains('01/01', na=False)]
+        df_filt = df[df['Fecha'].astype(str).str.contains('01/01', na=False)]
 
         # Dividir los montos en cuotas antes de sumarlos
         def sumar_montos_cuotas(row):
-            monto = row.iloc[10]  # Columna K
-            cuotas = int(row.iloc[7].split('/')[1])  # Columna H
+            monto = row['Monto']  # Columna K
+            cuotas = int(row['Cuotas'].split('/')[1])  # Columna H
             return monto / cuotas
 
         df_filt['Monto'] = df_filt.apply(sumar_montos_cuotas, axis=1)
