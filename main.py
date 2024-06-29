@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 # Título de la aplicación
 st.title('Procesador de Transacciones de Tarjeta de Crédito')
@@ -52,6 +53,10 @@ if archivo_excel is not None:
         # Mostrar el monto restante disponible
         st.subheader('Monto Restante Disponible')
         st.write(f'Monto restante disponible: {monto_restante:.2f}')
+
+        # Generar gráfico de gastos por categoría con Plotly
+        fig = px.bar(df_filt, x='Categoria', y='Monto', title='Gastos por Categoría')
+        st.plotly_chart(fig)
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
