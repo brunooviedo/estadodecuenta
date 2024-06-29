@@ -9,10 +9,8 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 
 if archivo_excel is not None:
     try:
-        # Leer el archivo Excel con openpyxl o xlrd
+        # Leer el archivo Excel con openpyxl
         df = pd.read_excel(archivo_excel, engine='openpyxl')
-        # Si no funciona, intentar con engine='xlrd'
-        df = pd.read_excel(archivo_excel, engine='xlrd')
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
