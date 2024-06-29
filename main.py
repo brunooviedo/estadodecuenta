@@ -9,8 +9,8 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 
 if archivo_excel is not None:
     try:
-        # Leer el archivo Excel con openpyxl
-        df = pd.read_excel(archivo_excel, engine='openpyxl')
+        # Leer el archivo Excel con el motor predeterminado (xlrd)
+        df = pd.read_excel(archivo_excel)
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
@@ -34,3 +34,6 @@ if archivo_excel is not None:
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
+        st.write('Asegúrate de que el archivo de Excel esté en el formato correcto y no esté bloqueado o abierto en otra aplicación.')
+else:
+    st.warning('No se ha cargado ningún archivo de Excel. Por favor, selecciona un archivo válido.')
