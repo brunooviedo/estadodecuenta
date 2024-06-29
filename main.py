@@ -4,6 +4,9 @@ import pandas as pd
 # Título de la aplicación
 st.title('Procesador de Transacciones de Tarjeta de Crédito')
 
+# Agregar campo para ingresar el Sueldo Líquido o Monto Disponible
+monto_disponible = st.number_input('Ingrese el Sueldo Líquido o Monto Disponible:', min_value=0.0, step=1.0)
+
 # Cargar archivo de Excel
 archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 
@@ -23,6 +26,9 @@ if archivo_excel is not None:
         suma_positivos = montos[montos > 0].sum()
         suma_negativos = montos[montos < 0].sum()
 
+        # Calcular el monto restante disponible
+        monto_restante = monto_disponible - suma_positivos
+
         # Mostrar resultados
         st.subheader('Resultados')
         st.write(f'Suma de montos positivos: {suma_positivos:.2f}')
@@ -31,6 +37,10 @@ if archivo_excel is not None:
             st.write(f'Suma de montos negativos (abonos o reversos): {suma_negativos:.2f}')
         else:
             st.write('No se encontraron montos negativos para registrar como abonos o reversos.')
+
+        # Mostrar el monto restante disponible
+        st.subheader('Monto Restante Disponible')
+        st.write(f'Monto restante disponible: {monto_restante:.2f}')
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
