@@ -51,12 +51,7 @@ if archivo_excel is not None:
         st.subheader('Monto Restante Disponible')
         st.write(f'Monto restante disponible: {monto_restante:.2f}')
 
-        # Generar gráfico de gastos por categoría con Plotly
-        if 'Categoria' in df.columns:
-            fig = px.bar(df, x='Categoria', y='Monto', title='Gastos por Categoría')
-            st.plotly_chart(fig)
-        else:
-            st.warning('No se encontró la columna de Categoría en el archivo.')
+        # No se incluye la generación de gráfico de gastos por categoría
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
