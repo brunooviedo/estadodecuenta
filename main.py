@@ -20,27 +20,6 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
-        # Función para obtener el cupo total desde las celdas combinadas H15:L15
-        def obtener_cupo_total(df):
-            try:
-                # Unir el contenido de las celdas combinadas
-                cupo_total = ' '.join(str(df.iloc[14, col]) for col in range(7, 12))
-                return cupo_total
-            except Exception as e:
-                st.error(f'Error al obtener el cupo total: {e}')
-                return None
-
-        # Obtener el cupo total, cupo utilizado y cupo disponible
-        cupo_total = obtener_cupo_total(df)  # Llamada a la función para obtener el cupo total
-        cupo_utilizado = df.iloc[14, 4]  # Columna E15
-        cupo_disponible = df.iloc[14, 1]  # Columna B15
-
-        # Mostrar información del cupo de la tarjeta de crédito
-        st.subheader('Cupo de la Tarjeta de Crédito')
-        st.write(f'Cupo Total: {cupo_total}')
-        st.write(f'Cupo Utilizado: {cupo_utilizado}')
-        st.write(f'Cupo Disponible: {cupo_disponible}')
-
         # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
         if 'Fecha' in df.columns:
             df_filt = df[df['Fecha'].astype(str).str.contains('01/01', na=False)]
