@@ -27,9 +27,9 @@ if archivo_excel is not None:
 
         # Mostrar información del cupo de la tarjeta de crédito
         st.subheader('Cupo de la Tarjeta de Crédito')
-        st.write(f'Cupo Total: {cupo_total:.2f}')
-        st.write(f'Cupo Utilizado: {cupo_utilizado:.2f}')
-        st.write(f'Cupo Disponible: {cupo_disponible:.2f}')
+        st.write(f'Cupo Total: {cupo_total}')
+        st.write(f'Cupo Utilizado: {cupo_utilizado}')
+        st.write(f'Cupo Disponible: {cupo_disponible}')
 
         # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
         df_filt = df[df['Fecha'].astype(str).str.contains('01/01', na=False)]
