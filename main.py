@@ -43,7 +43,7 @@ if archivo_excel is not None:
 
         # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
         if 'Fecha' in df.columns:
-            df_filt = df[df.iloc[:, 7].astype(str).str.contains('01/01', na=False)]
+            df_filt = df[df['Fecha'].astype(str).str.contains('01/01', na=False)]
         else:
             st.warning('No se encontró la columna "Fecha" en el archivo.')
 
