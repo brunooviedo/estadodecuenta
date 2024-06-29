@@ -16,9 +16,23 @@ if archivo_excel is not None:
         # Leer el archivo Excel con el motor predeterminado (xlrd)
         df = pd.read_excel(archivo_excel, skiprows=18)  # Saltar las primeras 18 filas
 
+        # Eliminar columnas sin nombre o vacías
+        df = df.dropna(axis=1, how='all')
+
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
         st.write(df.head())
+
+        # Obtener el cupo total, cupo utilizado y cupo disponible
+        cupo_total = df.iloc[14, 7]  # Columna H15
+        cupo_utilizado = df.iloc[14, 4]  # Columna E15
+        cupo_disponible = df.iloc[14, 1]  # Columna B15
+
+        # Mostrar información del cupo de la tarjeta de crédito
+        st.subheader('Cupo de la Tarjeta de Crédito')
+        st.write(f'Cupo Total: {cupo_total:.2f}')
+        st.write(f'Cupo Utilizado: {cupo_utilizado:.2f}')
+        st.write(f'Cupo Disponible: {cupo_disponible:.2f}')
 
         # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
         df_filt = df[df.iloc[:, 7].astype(str).str.contains('01/01', na=False)]
