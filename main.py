@@ -16,9 +16,6 @@ if archivo_excel is not None:
         # Leer el archivo Excel con el motor predeterminado (xlrd)
         df = pd.read_excel(archivo_excel, skiprows=18)  # Saltar las primeras 18 filas
 
-        # Eliminar columnas sin nombre o vacías
-        df = df.dropna(axis=1, how='all')
-
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
         st.write(df.head())
