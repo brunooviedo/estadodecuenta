@@ -19,8 +19,19 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
-        # Obtener la columna de montos (Columna K, a partir de la fila 19)
-        montos = df.iloc[18:, 10]  # Columna K, filas 19 en adelante (indexado desde 0)
+        # Filtrar y sumar los montos correspondientes a pagos de 1 cuota (columna H contiene "01/01")
+        df_filt = df[df['Fecha'].str.contains('01/01', na=False)]
+
+        # Dividir los montos en cuotas antes de sumarlos
+        def sumar_montos_cuotas(row):
+            monto = row['Monto']
+            cuotas = row['Cuotas']
+            return monto / cuotas
+
+        df_filt['Monto'] = df_filt.apply(sumar_montos_cuotas, axis=1)
+
+        # Obtener la columna de montos filtrada
+        montos = df_filt['Monto']
 
         # Filtrar y sumar los montos positivos y registrar los negativos como abonos o reversos
         suma_positivos = montos[montos > 0].sum()
@@ -31,7 +42,7 @@ if archivo_excel is not None:
 
         # Mostrar resultados
         st.subheader('Resultados')
-        st.write(f'Suma de montos positivos: {suma_positivos:.2f}')
+        st.write(f'Suma de montos positivos (pagos de 1 cuota): {suma_positivos:.2f}')
 
         if suma_negativos != 0:
             st.write(f'Suma de montos negativos (abonos o reversos): {suma_negativos:.2f}')
