@@ -31,28 +31,26 @@ if archivo_excel is not None:
         # Obtener la columna de montos
         montos = df['Monto']
 
-        # Filtrar y sumar los montos positivos y registrar los negativos como abonos o reversos
-        suma_positivos = montos[montos > 0].sum()
-        suma_negativos = montos[montos < 0].sum()
+        # Filtrar y sumar los montos positivos (abonos) y los negativos (gastos)
+        abonos = montos[montos > 0]
+        gastos = montos[montos < 0]
 
         # Calcular el monto restante disponible
-        monto_restante = monto_disponible - suma_positivos
+        suma_abonos = abonos.sum()
+        suma_gastos = gastos.sum()
+        monto_restante = monto_disponible - suma_abonos
 
         # Mostrar resultados formateados
         st.subheader('Resultados')
-        st.write(f'Suma de montos positivos (pagos de 1 cuota): ${suma_positivos:.2f}')
-        
-        if suma_negativos != 0:
-            st.write(f'Suma de montos negativos (abonos o reversos): ${suma_negativos:.2f}')
-        else:
-            st.write('No se encontraron montos negativos para registrar como abonos o reversos.')
-
-        # Mostrar el monto restante disponible
-        st.subheader('Monto Restante Disponible')
+        st.write(f'Suma de abonos (positivos): ${suma_abonos:.2f}')
+        st.write(f'Suma de gastos (negativos): ${suma_gastos:.2f}')
         st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
-        # Generar gráfico de gastos por categoría con Plotly
-        fig = px.bar(df, x=df.index, y='Monto', title='Gastos por Transacción')
+        # Asignar colores a los abonos (azul) y gastos (rojo)
+        colors = ['blue' if x > 0 else 'red' for x in df['Monto']]
+
+        # Generar gráfico de barras con colores asignados
+        fig = px.bar(df, x=df.index, y='Monto', title='Gastos por Transacción', color=colors)
         st.plotly_chart(fig)
 
     except Exception as e:
