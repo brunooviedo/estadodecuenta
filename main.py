@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import locale
-
-# Establecer configuración regional para formato de números
-locale.setlocale(locale.LC_ALL, '')
 
 # Título de la aplicación
 st.title('Procesador de Transacciones de Tarjeta de Crédito')
@@ -42,24 +38,22 @@ if archivo_excel is not None:
         # Calcular el monto restante disponible
         monto_restante = monto_disponible - suma_positivos
 
-        # Mostrar resultados formateados en miles y millones
+        # Mostrar resultados formateados
         st.subheader('Resultados')
-        st.write(f'Suma de montos positivos (pagos de 1 cuota): {locale.format_string("%.2f", suma_positivos, grouping=True)}')
+        st.write(f'Suma de montos positivos (pagos de 1 cuota): ${suma_positivos:.2f}')
+        
         if suma_negativos != 0:
-            st.write(f'Suma de montos negativos (abonos o reversos): {locale.format_string("%.2f", suma_negativos, grouping=True)}')
+            st.write(f'Suma de montos negativos (abonos o reversos): ${suma_negativos:.2f}')
         else:
             st.write('No se encontraron montos negativos para registrar como abonos o reversos.')
 
         # Mostrar el monto restante disponible
         st.subheader('Monto Restante Disponible')
-        st.write(f'Monto restante disponible: {locale.format_string("%.2f", monto_restante, grouping=True)}')
+        st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
         # Generar gráfico de gastos por categoría con Plotly
-        if 'Categoria' in df.columns:
-            fig = px.bar(df, x='Categoria', y='Monto', title='Gastos por Categoría')
-            st.plotly_chart(fig)
-        else:
-            st.warning('No se encontró la columna de Categoría en el archivo.')
+        fig = px.bar(df, x=df.index, y='Monto', title='Gastos por Transacción')
+        st.plotly_chart(fig)
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
