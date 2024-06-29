@@ -20,8 +20,18 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
+        # Función para obtener el cupo total desde las celdas combinadas H15:L15
+        def obtener_cupo_total(df):
+            try:
+                # Unir el contenido de las celdas combinadas
+                cupo_total = ' '.join(str(df.iloc[14, col]) for col in range(7, 12))
+                return cupo_total
+            except Exception as e:
+                st.error(f'Error al obtener el cupo total: {e}')
+                return None
+
         # Obtener el cupo total, cupo utilizado y cupo disponible
-        cupo_total = obtener_cupo_total(df)  # Función para obtener el cupo total
+        cupo_total = obtener_cupo_total(df)  # Llamada a la función para obtener el cupo total
         cupo_utilizado = df.iloc[14, 4]  # Columna E15
         cupo_disponible = df.iloc[14, 1]  # Columna B15
 
@@ -77,13 +87,3 @@ if archivo_excel is not None:
         st.write('Asegúrate de que el archivo de Excel esté en el formato correcto y no esté bloqueado o abierto en otra aplicación.')
 else:
     st.warning('No se ha cargado ningún archivo de Excel. Por favor, selecciona un archivo válido.')
-
-def obtener_cupo_total(df):
-    # Función para obtener el cupo total desde las celdas combinadas H15:L15
-    try:
-        # Unir el contenido de las celdas combinadas
-        cupo_total = ' '.join(str(df.iloc[14, col]) for col in range(7, 12))
-        return cupo_total
-    except Exception as e:
-        st.error(f'Error al obtener el cupo total: {e}')
-        return None
