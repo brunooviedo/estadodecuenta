@@ -20,6 +20,10 @@ if archivo_excel is not None:
         df = df.rename(columns={'Columna2': 'Fecha'})
         df = df[['Fecha', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto']]
 
+        # Mostrar los nombres de las columnas para verificar la estructura del archivo
+        st.write("Nombres de las columnas:")
+        st.write(df.columns)
+
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
         st.write(df.head())
