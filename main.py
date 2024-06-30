@@ -57,12 +57,14 @@ if archivo_excel is not None:
         fig.update_traces(hovertemplate='%{text}')
         st.plotly_chart(fig)
 
-        # Calcular el porcentaje de cada gasto respecto al monto disponible
+        # Filtrar los gastos del DataFrame
         df_gastos = df[df['Monto'] < 0]
+
+        # Calcular el porcentaje de cada gasto respecto al monto disponible
         df_gastos['Porcentaje'] = (df_gastos['Monto'] / monto_disponible) * 100
 
         # Generar gráfico de pastel
-        fig_pie = px.pie(df_gastos, values='Monto', names=df_gastos.index, title='Distribución de Gastos', 
+        fig_pie = px.pie(df_gastos, values='Monto', names=df_gastos.index, title='Distribución de Gastos',
                          hover_data=['Porcentaje'], labels={'Monto': 'Monto (CLP)'})
         fig_pie.update_traces(textinfo='percent+label', hovertemplate='Gasto: %{value:.2f}<br>Porcentaje: %{percent:.2%}')
         st.plotly_chart(fig_pie)
