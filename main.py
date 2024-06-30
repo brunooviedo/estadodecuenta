@@ -47,8 +47,8 @@ st.title('Procesador de Transacciones de Tarjeta de Crédito')
 # Agregar campo para ingresar el Sueldo Líquido o Monto Disponible
 monto_disponible = st.number_input('Ingrese el Sueldo Líquido o Monto Disponible:', min_value=0.0, step=1.0)
 
-# Cargar archivo de Excel
-archivo_excel = st.file_uploader("Cargar archivo Excel (.xlsx, .xls)")
+# Cargar archivo de Excel con el botón personalizado
+archivo_excel = st.file_uploader("", label="Cargar archivo Excel (.xlsx, .xls)")
 
 if archivo_excel is not None:
     try:
