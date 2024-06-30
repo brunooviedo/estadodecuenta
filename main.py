@@ -17,8 +17,8 @@ if archivo_excel is not None:
         df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K")
 
         # Renombrar las columnas según las especificaciones y seleccionar solo las necesarias
-        df = df.rename(columns={'Columna2': 'Fecha'})
-        df = df[['Fecha', 'Descripcion', 'Ciudad', 'Cuotas']]
+        # df = df.rename(columns={'Columna2': 'Fecha'})
+        # df = df[['Fecha', 'Descripcion', 'Ciudad', 'Cuotas']]
 
         # Mostrar los nombres de las columnas para verificar la estructura del archivo
         st.write("Nombres de las columnas:")
