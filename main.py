@@ -10,31 +10,37 @@ def formatear_numero(numero):
     else:
         return f"${partes[0].replace(',', '.')}"
 
-# Estilos CSS para los mensajes
+# Estilos CSS para personalizar el botón
 st.markdown(
     """
     <style>
-    .resultado {
-        padding: 10px;
-        background-color: #f0f0f0;
-        border-radius: 5px;
-        margin-bottom: 10px;
+    /* Estilo para el botón de carga de archivos */
+    .uploader > .content > .block-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
     }
-    .positivo {
-        color: #388e3c;
+    .uploader > .content > .block-container > div {
+        display: none;
     }
-    .negativo {
-        color: #d32f2f;
+    .uploader > .content > .block-container > .button-content {
+        background-color: #1f78b4;
+        color: white;
+        font-weight: bold;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s;
     }
-    .icono {
-        font-size: 20px;
-        margin-right: 10px;
+    .uploader > .content > .block-container > .button-content:hover {
+        background-color: #155e8a;
     }
-    .advertencia {
-        padding: 10px;
-        background-color: #ffe082;
-        border-radius: 5px;
-        margin-bottom: 10px;
+    .uploader > .content > .block-container > .button-content > span {
+        margin-left: 8px;
     }
     </style>
     """,
@@ -48,12 +54,12 @@ st.title('Procesador de Transacciones de Tarjeta de Crédito')
 monto_disponible = st.number_input('Ingrese el Sueldo Líquido o Monto Disponible:', min_value=0.0, step=1.0)
 
 # Cargar archivo de Excel con el botón personalizado
-archivo_excel = st.file_uploader("", label="Cargar archivo Excel (.xlsx, .xls)")
+uploaded_file = st.file_uploader("Cargar archivo Excel (.xlsx, .xls)")
 
-if archivo_excel is not None:
+if uploaded_file is not None:
     try:
         # Leer el archivo Excel y renombrar columnas si es necesario
-        df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K")
+        df = pd.read_excel(uploaded_file, skiprows=17, usecols="B:K")
         df = df.rename(columns={df.columns[9]: 'Monto'})
 
         # Seleccionar solo las columnas necesarias y renombrar según corresponda
