@@ -27,18 +27,30 @@ if archivo_excel is not None:
         # Continuar con el procesamiento si no hay errores hasta aquí
         if 'Monto' in df.columns:
             # Convertir la columna 'Cuotas' a numérica
-            df['Cuotas'] = pd.to_numeric(df['Cuotas'], errors='coerce')  # Convertir errores a NaN
+            def convertir_cuotas(cuotas):
+                if isinstance(cuotas, str) and '/' in cuotas:
+                    partes = cuotas.split('/')
+                    try:
+                        return int(partes[1])
+                    except ValueError:
+                        return 1  # Si no se puede convertir, asumimos 1 cuota
+                elif pd.isna(cuotas):
+                    return 1  # Si es NaN, asumimos 1 cuota
+                else:
+                    return cuotas
+
+            df['Cuotas'] = df['Cuotas'].apply(convertir_cuotas)
 
             # Dividir los montos en cuotas antes de sumarlos
             def sumar_montos_cuotas(row):
                 monto = row['Monto']
+                cuotas = row['Cuotas']
                 if pd.isna(monto):  # Manejar casos donde el monto es NaN
                     return 0
-                cuotas = row['Cuotas']
-                if pd.isna(cuotas) or cuotas == 0:  # Evitar división por cero o cuotas NaN
-                    return monto
+                if cuotas == 0:  # Evitar división por cero
+                    return 0
                 monto_primera_cuota = monto / cuotas
-                return monto_primera_cuota + (cuotas - 1) * (monto_primera_cuota / cuotas)
+                return monto_primera_cuota
 
             df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
 
