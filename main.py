@@ -14,10 +14,10 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 if archivo_excel is not None:
     try:
         # Leer el archivo Excel y renombrar columnas
-        df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K", names=['Fecha', 'Columna2', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto'])
+        df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K", names=['Fecha', 'Tipo de Tarjeta', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto'])
 
         # Renombrar las columnas según las especificaciones y seleccionar solo las necesarias
-        df = df[['Fecha', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto']]
+        df = df[['Fecha', 'Tipo de Tarjeta', 'Ciudad', 'Cuotas', 'Monto']]
 
         # Mostrar los nombres de las columnas para verificar la estructura del archivo
         st.write("Nombres de las columnas:")
