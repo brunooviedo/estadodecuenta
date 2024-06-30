@@ -17,12 +17,12 @@ if archivo_excel is not None:
         df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K")
         df = df.rename(columns={df.columns[9]: 'Monto'})
 
+        # Seleccionar solo las columnas necesarias y renombrar según corresponda
+        df = df[['Fecha', 'Tipo de Tarjeta ', 'Descripción', 'Ciudad', 'Cuotas', 'Monto']]
+
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
         st.write(df.head())
-
-        # Seleccionar solo las columnas necesarias y renombrar según corresponda
-        df = df[['Fecha', 'Tipo de Tarjeta ', 'Descripción', 'Ciudad', 'Cuotas', 'Monto']]
 
         # Verificar la presencia de NaN en el DataFrame
         st.write("Valores NaN en el DataFrame:")
