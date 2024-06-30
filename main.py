@@ -16,8 +16,8 @@ if archivo_excel is not None:
         # Leer el archivo Excel y renombrar columnas si es necesario
         df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K")
 
-        # Seleccionar solo las columnas necesarias y renombrar según corresponda
-        # df = df[['Fecha', 'Tipo de Tarjeta ', 'Descripción', 'Ciudad', 'Cuotas','Monto ($)']]
+        # Renombrar las columnas según corresponda
+        df.columns = ['Fecha', 'Tipo de Tarjeta', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto ($)']
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
@@ -27,6 +27,7 @@ if archivo_excel is not None:
         st.write("Columnas originales del archivo:")
         st.write(df.columns.tolist())
         
+        # Mostrar el primer dato de cada columna del DataFrame
         st.write("Primer dato de cada columna:")
         for column in df.columns:
             first_value = df[column].iloc[0]  # Obtener el primer dato de la columna
@@ -37,20 +38,20 @@ if archivo_excel is not None:
         st.write(df.isnull().sum())
 
         # Continuar con el procesamiento si no hay errores hasta aquí
-        if 'Monto' in df.columns:
+        if 'Monto ($)' in df.columns:
             # Dividir los montos en cuotas antes de sumarlos
             def sumar_montos_cuotas(row):
-                monto = row['Monto']
+                monto = row['Monto ($)']
                 if pd.isna(monto):  # Manejar casos donde el monto es NaN
                     return 0
                 cuotas = row['Cuotas']
                 return monto / cuotas
 
-            df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
+            df['Monto ($)'] = df.apply(sumar_montos_cuotas, axis=1)
 
             # Filtrar y sumar los montos positivos (abonos) y los negativos (gastos)
-            abonos = df[df['Monto'] > 0]['Monto']
-            gastos = df[df['Monto'] < 0]['Monto']
+            abonos = df[df['Monto ($)'] > 0]['Monto ($)']
+            gastos = df[df['Monto ($)'] < 0]['Monto ($)']
 
             # Calcular el monto restante disponible
             suma_abonos = abonos.sum()
@@ -64,8 +65,8 @@ if archivo_excel is not None:
             st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
             # Obtener los gastos más frecuentes y sumarizados
-            gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripcion')['Monto'].count().reset_index()
-            gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Cantidad'})
+            gastos_frecuentes = df[df['Monto ($)'] < 0].groupby('Descripcion')['Monto ($)'].count().reset_index()
+            gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto ($)': 'Cantidad'})
 
             # Ordenar por la cantidad de gastos de mayor a menor
             gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
@@ -82,7 +83,7 @@ if archivo_excel is not None:
             st.plotly_chart(fig_pie_gastos_frecuentes)
 
         else:
-            st.warning("La columna 'Monto' no está presente en el DataFrame.")
+            st.warning("La columna 'Monto ($)' no está presente en el DataFrame.")
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
