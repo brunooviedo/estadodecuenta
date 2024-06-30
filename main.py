@@ -16,6 +16,8 @@ if archivo_excel is not None:
         # Leer el archivo Excel y renombrar columnas
         df = pd.read_excel(archivo_excel, skiprows=18, names=['Fecha', 'Columna2', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto'])
 
+        print(df)
+
         # Renombrar las columnas según las especificaciones
         df = df.rename(columns={'Columna2': 'Fecha'})
 
