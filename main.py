@@ -1,10 +1,14 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import locale
 
-# Configurar la localización para formateo de números
-locale.setlocale(locale.LC_ALL, '')  # Utiliza la configuración regional del sistema
+# Función para formatear números con separadores de miles
+def formatear_numero(numero):
+    partes = f"{numero:,.2f}".split('.')
+    if len(partes) > 1:
+        return f"${partes[0]}.{partes[1]}"
+    else:
+        return f"${partes[0]}"
 
 # Título de la aplicación
 st.title('Procesador de Transacciones de Tarjeta de Crédito')
@@ -65,16 +69,11 @@ if archivo_excel is not None:
             # Calcular el monto restante disponible
             monto_restante = monto_disponible - abonos
 
-            # Formatear los resultados para mostrarlos en formato de miles y millones
-            abonos_formato = locale.format_string('%.2f', abonos, grouping=True)
-            gastos_formato = locale.format_string('%.2f', gastos, grouping=True)
-            monto_restante_formato = locale.format_string('%.2f', monto_restante, grouping=True)
-
             # Mostrar resultados formateados
             st.subheader('Resultados')
-            st.write(f'Suma de Gastos (Compras) (positivos): ${abonos_formato}')
-            st.write(f'Suma de Abonos o Reversos (negativos): ${gastos_formato}')
-            st.write(f'Monto restante disponible: ${monto_restante_formato}')
+            st.write(f'Suma de Gastos (Compras) (positivos): {formatear_numero(abonos)}')
+            st.write(f'Suma de Abonos o Reversos (negativos): {formatear_numero(gastos)}')
+            st.write(f'Monto restante disponible: {formatear_numero(monto_restante)}')
 
             # Obtener los gastos más frecuentes y sumarizados
             gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripción')['Monto'].count().reset_index()
