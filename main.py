@@ -50,13 +50,22 @@ if archivo_excel is not None:
         colors = ['blue' if x > 0 else 'red' for x in df['Monto']]
 
         # Añadir hover text personalizado con la columna 4 y la columna 10
-        hover_text = [f'Info Columna 4: {row.iloc[4]}<br>Gasto: ${row.iloc[10]:.2f}' for index, row in df.iterrows()]
+        hover_text = [f'Info Columna 4: {row.iloc[3]}<br>Gasto: ${row.iloc[10]:.2f}' for index, row in df.iterrows()]
 
         # Generar gráfico de barras con colores asignados
         fig = px.bar(df, x=df.index, y='Monto', title='Gastos por Transacción', color=colors, text=hover_text)
         fig.update_traces(hovertemplate='%{text}')
-
         st.plotly_chart(fig)
+
+        # Calcular el porcentaje de cada gasto respecto al monto disponible
+        df_gastos = df[df['Monto'] < 0]
+        df_gastos['Porcentaje'] = (df_gastos['Monto'] / monto_disponible) * 100
+
+        # Generar gráfico de pastel
+        fig_pie = px.pie(df_gastos, values='Monto', names=df_gastos.index, title='Distribución de Gastos', 
+                         hover_data=['Porcentaje'], labels={'Monto': 'Monto (CLP)'})
+        fig_pie.update_traces(textinfo='percent+label', hovertemplate='Gasto: %{value:.2f}<br>Porcentaje: %{percent:.2%}')
+        st.plotly_chart(fig_pie)
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
