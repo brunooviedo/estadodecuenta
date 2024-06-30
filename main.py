@@ -14,19 +14,14 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 if archivo_excel is not None:
     try:
         # Leer el archivo Excel y renombrar columnas
-        df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K")
+        df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:L", names=['Fecha', 'Tipo de Tarjeta', 'Descripcion', 'Ciudad', 'Cuotas', 'Columna a Saltar', 'Monto ($)'])
 
-        # Renombrar las columnas según las especificaciones y seleccionar solo las necesarias
-        df.columns = ['Fecha', 'Tipo de Tarjeta', 'Descripción', 'Ciudad', 'Cuotas', 'Columna a Saltar', 'Monto ($)']
-        df = df[['Fecha', 'Tipo de Tarjeta', 'Descripción', 'Ciudad', 'Cuotas', 'Monto ($)']]
+        # Seleccionar solo las columnas necesarias y renombrar
+        df = df[['Fecha', 'Tipo de Tarjeta', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto ($)']]
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
         st.write(df.head())
-
-        # Verificar la presencia de NaN en el DataFrame
-        st.write("Valores NaN en el DataFrame:")
-        st.write(df.isnull().sum())
 
         # Continuar con el procesamiento si no hay errores hasta aquí
         if 'Monto' in df.columns:
