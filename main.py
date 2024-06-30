@@ -63,8 +63,8 @@ if archivo_excel is not None:
 
             # Mostrar resultados formateados
             st.subheader('Resultados')
-            st.write(f'Suma de abonos (positivos): ${abonos:.2f}')
-            st.write(f'Suma de gastos (negativos): ${gastos:.2f}')
+            st.write(f'Suma de Gastos (Compras) (positivos): ${abonos:.2f}')
+            st.write(f'Suma de Abonos o Reversos (negativos): ${gastos:.2f}')
             st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
             # Obtener los gastos más frecuentes y sumarizados
