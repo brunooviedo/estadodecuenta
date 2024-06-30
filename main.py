@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# Función para formatear números con separadores de miles
+# Función para formatear números con puntos como separador de miles y sin decimales en el último número
 def formatear_numero(numero):
     partes = f"{numero:,.2f}".split('.')
     if len(partes) > 1:
-        return f"${partes[0]}.{partes[1]}"
+        return f"${partes[0].replace(',', '.')}"
     else:
-        return f"${partes[0]}"
+        return f"${partes[0].replace(',', '.')}"
 
 # Título de la aplicación
 st.title('Procesador de Transacciones de Tarjeta de Crédito')
