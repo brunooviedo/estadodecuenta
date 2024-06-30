@@ -20,8 +20,8 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
-        # Comprobar si hay suficientes filas en el DataFrame
-        if df.shape[0] < 19:
+        # Verificar si hay suficientes filas después de saltar las primeras 18 filas
+        if df.shape[0] <= 18:
             raise ValueError('El archivo no tiene suficientes filas de datos después de la fila 18.')
 
         # Dividir los montos en cuotas antes de sumarlos
@@ -48,25 +48,28 @@ if archivo_excel is not None:
         st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
         # Obtener los gastos más frecuentes y sumarizados
-        gastos_frecuentes = df.iloc[19:, [4, 10]].copy()  # Seleccionar columna E (descripción) y K (monto)
-        gastos_frecuentes.columns = ['Descripcion', 'Monto']
-        gastos_frecuentes['Monto'] = gastos_frecuentes.apply(lambda row: sumar_montos_cuotas(row), axis=1)
+        if df.shape[0] > 19:  # Verificar si hay suficientes filas después de la fila 19 para procesar
+            gastos_frecuentes = df.iloc[19:, [4, 10]].copy()  # Seleccionar columna E (descripción) y K (monto)
+            gastos_frecuentes.columns = ['Descripcion', 'Monto']
+            gastos_frecuentes['Monto'] = gastos_frecuentes.apply(sumar_montos_cuotas, axis=1)
 
-        # Filtrar y contar los gastos más frecuentes
-        gastos_frecuentes = gastos_frecuentes[gastos_frecuentes['Monto'] < 0]  # Solo gastos (monto negativo)
-        gastos_frecuentes['Cantidad'] = gastos_frecuentes.groupby('Descripcion')['Monto'].transform('count')
-        gastos_frecuentes = gastos_frecuentes[['Descripcion', 'Cantidad']].drop_duplicates().sort_values(by='Cantidad', ascending=False)
+            # Filtrar y contar los gastos más frecuentes
+            gastos_frecuentes = gastos_frecuentes[gastos_frecuentes['Monto'] < 0]  # Solo gastos (monto negativo)
+            gastos_frecuentes['Cantidad'] = gastos_frecuentes.groupby('Descripcion')['Monto'].transform('count')
+            gastos_frecuentes = gastos_frecuentes[['Descripcion', 'Cantidad']].drop_duplicates().sort_values(by='Cantidad', ascending=False)
 
-        # Generar gráfico de barras horizontales de los gastos más frecuentes
-        fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripcion', orientation='h',
-                                       title='Gastos Más Frecuentes', labels={'Descripcion': 'Descripción'})
-        st.plotly_chart(fig_gastos_frecuentes)
+            # Generar gráfico de barras horizontales de los gastos más frecuentes
+            fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripcion', orientation='h',
+                                           title='Gastos Más Frecuentes', labels={'Descripcion': 'Descripción'})
+            st.plotly_chart(fig_gastos_frecuentes)
 
-        # Generar gráfico de pastel con los gastos más frecuentes
-        fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripcion',
-                                           title='Distribución de Gastos Más Frecuentes')
-        fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
-        st.plotly_chart(fig_pie_gastos_frecuentes)
+            # Generar gráfico de pastel con los gastos más frecuentes
+            fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripcion',
+                                               title='Distribución de Gastos Más Frecuentes')
+            fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
+            st.plotly_chart(fig_pie_gastos_frecuentes)
+        else:
+            st.warning('No hay suficientes filas de datos después de la fila 18 para procesar.')
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
