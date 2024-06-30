@@ -13,11 +13,14 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 
 if archivo_excel is not None:
     try:
-        # Leer el archivo Excel y renombrar columnas si la lectura es exitosa
-        df = pd.read_excel(archivo_excel, skiprows=18, usecols="B:E", names=['Fecha', 'Descripcion', 'Monto', 'Columna4'])
+        # Leer el archivo Excel y renombrar columnas
+        df = pd.read_excel(archivo_excel, skiprows=18, names=['Fecha', 'Columna2', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto'])
 
-        # Renombrar la tercera columna a 'Descripcion' y seleccionar columnas necesarias
-        df = df[['Fecha', 'Descripcion', 'Monto']]
+        # Renombrar las columnas según las especificaciones
+        df = df.rename(columns={'Columna2': 'Fecha'})
+
+        # Seleccionar solo las columnas necesarias
+        df = df[['Fecha', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto']]
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
@@ -28,7 +31,7 @@ if archivo_excel is not None:
             monto = row['Monto']
             if pd.isna(monto):  # Manejar casos donde el monto es NaN
                 return 0
-            cuotas = int(row['Descripcion'].split('/')[1]) if '/' in str(row['Descripcion']) else 1
+            cuotas = row['Cuotas']
             return monto / cuotas
 
         df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
