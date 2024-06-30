@@ -37,7 +37,8 @@ if archivo_excel is not None:
                 cuotas = row['Cuotas']
                 if pd.isna(cuotas) or cuotas == 0:  # Evitar división por cero o cuotas NaN
                     return monto
-                return monto / cuotas
+                monto_primera_cuota = monto / cuotas
+                return monto_primera_cuota + (cuotas - 1) * (monto_primera_cuota / cuotas)
 
             df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
 
