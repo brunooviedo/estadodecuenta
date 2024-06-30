@@ -24,22 +24,6 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
-        # Verificar la presencia de NaN en el DataFrame
-        st.write("Valores NaN en el DataFrame:")
-        st.write(df.isnull().sum())
-
-        # Expander para mostrar detalles del DataFrame
-        with st.expander("Ver detalles del DataFrame"):
-            # Mostrar las columnas originales del DataFrame
-            st.write("Columnas originales del archivo:")
-            st.write(df.columns.tolist())
-            
-            # Mostrar el primer dato de cada columna del DataFrame
-            st.write("Primer dato de cada columna:")
-            for column in df.columns:
-                first_value = df[column].iloc[0]  # Obtener el primer dato de la columna
-                st.write(f"Columna '{column}': {first_value}")
-
         # Continuar con el procesamiento si no hay errores hasta aquí
         if 'Monto' in df.columns:
             # Convertir la columna 'Cuotas' a numérica
