@@ -13,8 +13,8 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 
 if archivo_excel is not None:
     try:
-        # Leer el archivo Excel
-        df = pd.read_excel(archivo_excel, skiprows=18, usecols="E:") # Leer desde la columna E en adelante
+        # Leer el archivo Excel y renombrar columnas
+        df = pd.read_excel(archivo_excel, skiprows=18, names=['Fecha', 'Descripcion', 'Monto'])
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
@@ -22,8 +22,8 @@ if archivo_excel is not None:
 
         # Dividir los montos en cuotas antes de sumarlos
         def sumar_montos_cuotas(row):
-            monto = row.iloc[5]  # Columna F
-            cuotas = int(row.iloc[2].split('/')[1])  # Columna C
+            monto = row['Monto']
+            cuotas = int(row['Descripcion'].split('/')[1]) if '/' in row['Descripcion'] else 1
             return monto / cuotas
 
         df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
