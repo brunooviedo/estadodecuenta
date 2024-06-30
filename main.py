@@ -76,8 +76,8 @@ if archivo_excel is not None:
             st.write(f'Monto restante disponible: {formatear_numero(monto_restante)}')
 
             # Obtener los gastos más frecuentes y sumarizados
-            gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripción')['Monto'].count().reset_index()
-            gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Cantidad'})
+            gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripción')['Monto'].sum().reset_index()
+            gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Total Gasto'})
 
             # Ordenar por la cantidad de gastos de mayor a menor
             gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
