@@ -76,20 +76,25 @@ if archivo_excel is not None:
             st.write(f'Monto restante disponible: {formatear_numero(monto_restante)}')
 
             # Obtener los gastos más frecuentes y sumarizados, excluyendo los gastos negativos
-            gastos_frecuentes = df[df['Monto'] > 0].groupby('Descripción')['Monto'].sum().reset_index()
-            gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Total Gasto'})
+            gastos_frecuentes = df[df['Monto'] > 0].groupby('Descripción')['Monto'].agg(['count', 'sum']).reset_index()
+            gastos_frecuentes = gastos_frecuentes.rename(columns={'count': 'Cantidad', 'sum': 'Total Gasto'})
 
-            # Ordenar por el total de gastos de mayor a menor
-            gastos_frecuentes = gastos_frecuentes.sort_values(by='Total Gasto', ascending=False)
+            # Ordenar por la cantidad de gastos de mayor a menor
+            gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
 
-            # Generar gráfico de barras horizontales de los gastos más frecuentes
-            fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Total Gasto', y='Descripción', orientation='h',
-                                           title='Gastos Más Frecuentes', labels={'Descripción': 'Descripción'})
-            st.plotly_chart(fig_gastos_frecuentes)
+            # Generar gráfico de barras horizontales de los gastos más frecuentes por cantidad
+            fig_gastos_frecuentes_cantidad = px.bar(gastos_frecuentes, x='Cantidad', y='Descripción', orientation='h',
+                                                    title='Gastos Más Frecuentes por Cantidad', labels={'Descripción': 'Descripción'})
+            st.plotly_chart(fig_gastos_frecuentes_cantidad)
 
-            # Generar gráfico de pastel con los gastos más frecuentes
-            fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Total Gasto', names='Descripción',
-                                               title='Distribución de Gastos Más Frecuentes')
+            # Generar gráfico de barras horizontales de los gastos más frecuentes por total gasto
+            fig_gastos_frecuentes_gasto = px.bar(gastos_frecuentes, x='Total Gasto', y='Descripción', orientation='h',
+                                                 title='Gastos Más Frecuentes por Total Gasto', labels={'Descripción': 'Descripción'})
+            st.plotly_chart(fig_gastos_frecuentes_gasto)
+
+            # Generar gráfico de pastel con los gastos más frecuentes por cantidad
+            fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripción',
+                                               title='Distribución de Gastos Más Frecuentes por Cantidad')
             fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
 
             # Aumentar el tamaño del gráfico de pastel
