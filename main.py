@@ -23,7 +23,9 @@ if archivo_excel is not None:
         # Dividir los montos en cuotas antes de sumarlos
         def sumar_montos_cuotas(row):
             monto = row['Monto']
-            cuotas = int(row['Descripcion'].split('/')[1]) if '/' in row['Descripcion'] else 1
+            if pd.isna(monto):  # Manejar casos donde el monto es NaN
+                return 0
+            cuotas = int(row['Descripcion'].split('/')[1]) if '/' in str(row['Descripcion']) else 1
             return monto / cuotas
 
         df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
