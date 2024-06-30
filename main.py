@@ -20,6 +20,10 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
+        # Comprobar si hay suficientes filas en el DataFrame
+        if df.shape[0] < 19:
+            raise ValueError('El archivo no tiene suficientes filas de datos después de la fila 18.')
+
         # Dividir los montos en cuotas antes de sumarlos
         def sumar_montos_cuotas(row):
             monto = row.iloc[10]  # Columna K
