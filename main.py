@@ -44,11 +44,14 @@ if archivo_excel is not None:
         st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
         # Obtener los gastos más frecuentes y sumarizados
-        gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripcion')['Monto'].count().reset_index()
-        gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Cantidad'})
+        gastos_frecuentes = df.iloc[19:, [4, 10]].copy()  # Seleccionar columna E (descripción) y K (monto)
+        gastos_frecuentes.columns = ['Descripcion', 'Monto']
+        gastos_frecuentes['Monto'] = gastos_frecuentes.apply(lambda row: sumar_montos_cuotas(row), axis=1)
 
-        # Ordenar por la cantidad de gastos de mayor a menor
-        gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
+        # Filtrar y contar los gastos más frecuentes
+        gastos_frecuentes = gastos_frecuentes[gastos_frecuentes['Monto'] < 0]  # Solo gastos (monto negativo)
+        gastos_frecuentes['Cantidad'] = gastos_frecuentes.groupby('Descripcion')['Monto'].transform('count')
+        gastos_frecuentes = gastos_frecuentes[['Descripcion', 'Cantidad']].drop_duplicates().sort_values(by='Cantidad', ascending=False)
 
         # Generar gráfico de barras horizontales de los gastos más frecuentes
         fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripcion', orientation='h',
