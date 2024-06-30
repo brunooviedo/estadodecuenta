@@ -59,11 +59,6 @@ if archivo_excel is not None:
         df_gastos = df[df['Monto'] < 0].copy()
         df_gastos['Porcentaje'] = (df_gastos['Monto'] / suma_gastos) * 100
 
-        # Generar gráfico de pastel
-        fig_pie = px.pie(df_gastos, values='Monto', names='Descripcion', title='Distribución de Gastos',
-                         hover_data=['Porcentaje'], labels={'Monto': 'Monto (CLP)'})
-        fig_pie.update_traces(textinfo='percent+label', hovertemplate='Gasto: %{value:.2f}<br>Porcentaje: %{percent:.2%}')
-        st.plotly_chart(fig_pie)
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
