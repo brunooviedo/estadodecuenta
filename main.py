@@ -91,7 +91,9 @@ if archivo_excel is not None:
             fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Total Gasto', names='Descripción',
                                                title='Distribución de Gastos Más Frecuentes')
             fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
-            st.plotly_chart(fig_pie_gastos_frecuentes)
+
+            # Aumentar el tamaño del gráfico de pastel
+            st.plotly_chart(fig_pie_gastos_frecuentes, use_container_width=False, width=700)
 
         else:
             st.warning("La columna 'Monto' no está presente en el DataFrame.")
