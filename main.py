@@ -69,11 +69,29 @@ if archivo_excel is not None:
             # Calcular el monto restante disponible
             monto_restante = monto_disponible - abonos
 
+            # Calcular el porcentaje gastado del monto disponible
+            porcentaje_gastado = (abonos / monto_disponible) * 100
+
+            # Mensaje de advertencia según el día del mes
+            dia_del_mes = pd.Timestamp.now().day
+            if dia_del_mes <= 10 and porcentaje_gastado > 30:
+                mensaje_advertencia = "¡Cuidado! Estás gastando demasiado rápido este mes."
+            elif dia_del_mes <= 20 and porcentaje_gastado > 60:
+                mensaje_advertencia = "Tu gasto está por encima de lo esperado para este mes."
+            elif porcentaje_gastado > 90:
+                mensaje_advertencia = "¡Alerta! Has alcanzado un alto porcentaje del gasto disponible."
+            else:
+                mensaje_advertencia = ""
+
             # Mostrar resultados formateados
             st.subheader('Resultados')
             st.write(f'Suma de Gastos (Compras) (positivos): {formatear_numero(abonos)}')
             st.write(f'Suma de Abonos o Reversos (negativos): {formatear_numero(gastos)}')
             st.write(f'Monto restante disponible: {formatear_numero(monto_restante)}')
+            st.write(f'Porcentaje gastado del monto disponible: {porcentaje_gastado:.2f}%')
+
+            if mensaje_advertencia:
+                st.warning(mensaje_advertencia)
 
             # Obtener los gastos más frecuentes y sumarizados, excluyendo los gastos negativos
             gastos_frecuentes = df[df['Monto'] > 0].groupby('Descripción')['Monto'].agg(['count', 'sum']).reset_index()
