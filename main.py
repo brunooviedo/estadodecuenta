@@ -23,6 +23,15 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
+        # Mostrar las columnas originales del DataFrame
+        st.write("Columnas originales del archivo:")
+        st.write(df.columns.tolist())
+        
+        # Mostrar el primer dato de cada fila del DataFrame
+        st.write("Primer dato de cada fila:")
+        for index, row in df.iterrows():
+            st.write(f"Fila {index + 1}: {row.iloc[0]}")  # Aquí asumimos que el primer dato es el de la primera columna ('Fecha')
+
         # Verificar la presencia de NaN en el DataFrame
         st.write("Valores NaN en el DataFrame:")
         st.write(df.isnull().sum())
