@@ -14,7 +14,7 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 if archivo_excel is not None:
     try:
         # Leer el archivo Excel y renombrar columnas si es necesario
-        df = pd.read_excel(archivo_excel, skiprows=16, usecols="B:K")
+        df = pd.read_excel(archivo_excel, skiprows=18, usecols="B:K")
 
         # Seleccionar solo las columnas necesarias y renombrar según corresponda
         df = df[['Fecha', 'Tipo de Tarjeta', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto ($)']]
