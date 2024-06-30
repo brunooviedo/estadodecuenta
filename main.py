@@ -49,8 +49,13 @@ if archivo_excel is not None:
         # Asignar colores a los abonos (azul) y gastos (rojo)
         colors = ['blue' if x > 0 else 'red' for x in df['Monto']]
 
+        # Añadir hover text personalizado
+        hover_text = [f'Gasto: ${x:.2f}' if x < 0 else f'Abono: ${x:.2f}' for x in df['Monto']]
+
         # Generar gráfico de barras con colores asignados
-        fig = px.bar(df, x=df.index, y='Monto', title='Gastos por Transacción', color=colors)
+        fig = px.bar(df, x=df.index, y='Monto', title='Gastos por Transacción', color=colors, text=hover_text)
+        fig.update_traces(hovertemplate='%{text}')
+
         st.plotly_chart(fig)
 
     except Exception as e:
