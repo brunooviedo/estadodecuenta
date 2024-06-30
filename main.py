@@ -22,7 +22,7 @@ if archivo_excel is not None:
         st.write(df.head())
 
         # Seleccionar solo las columnas necesarias y renombrar según corresponda
-        df = df[['Fecha', 'Tipo de Tarjeta', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto']]
+        df = df[['Fecha', 'Tipo de Tarjeta ', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto']]
 
         # Verificar la presencia de NaN en el DataFrame
         st.write("Valores NaN en el DataFrame:")
