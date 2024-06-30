@@ -10,6 +10,37 @@ def formatear_numero(numero):
     else:
         return f"${partes[0].replace(',', '.')}"
 
+# Estilos CSS para los mensajes
+st.markdown(
+    """
+    <style>
+    .resultado {
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    .positivo {
+        color: #388e3c;
+    }
+    .negativo {
+        color: #d32f2f;
+    }
+    .icono {
+        font-size: 20px;
+        margin-right: 10px;
+    }
+    .advertencia {
+        padding: 10px;
+        background-color: #ffe082;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Título de la aplicación
 st.title('Procesador de Transacciones de Tarjeta de Crédito')
 
@@ -74,24 +105,23 @@ if archivo_excel is not None:
 
             # Mensaje de advertencia según el día del mes
             dia_del_mes = pd.Timestamp.now().day
+            mensaje_advertencia = ""
             if dia_del_mes <= 10 and porcentaje_gastado > 30:
                 mensaje_advertencia = "¡Cuidado! Estás gastando demasiado rápido este mes."
             elif dia_del_mes <= 20 and porcentaje_gastado > 60:
                 mensaje_advertencia = "Tu gasto está por encima de lo esperado para este mes."
             elif porcentaje_gastado > 90:
                 mensaje_advertencia = "¡Alerta! Has alcanzado un alto porcentaje del gasto disponible."
-            else:
-                mensaje_advertencia = ""
 
-            # Mostrar resultados formateados
+            # Mostrar resultados formateados con iconos y estilos
             st.subheader('Resultados')
-            st.write(f'Suma de Gastos (Compras) (positivos): {formatear_numero(abonos)}')
-            st.write(f'Suma de Abonos o Reversos (negativos): {formatear_numero(gastos)}')
-            st.write(f'Monto restante disponible: {formatear_numero(monto_restante)}')
-            st.write(f'Porcentaje gastado del monto disponible: {porcentaje_gastado:.2f}%')
+            st.markdown(f'<div class="resultado positivo"><span class="icono">💸</span> Suma de Gastos (Compras) (positivos): {formatear_numero(abonos)}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="resultado negativo"><span class="icono">💳</span> Suma de Abonos o Reversos (negativos): {formatear_numero(gastos)}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="resultado"><span class="icono">💰</span> Monto restante disponible: {formatear_numero(monto_restante)}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="resultado"><span class="icono">📈</span> Porcentaje gastado del monto disponible: {porcentaje_gastado:.2f}%</div>', unsafe_allow_html=True)
 
             if mensaje_advertencia:
-                st.warning(mensaje_advertencia)
+                st.markdown(f'<div class="advertencia"><span class="icono">⚠️</span> {mensaje_advertencia}</div>', unsafe_allow_html=True)
 
             # Obtener los gastos más frecuentes y sumarizados, excluyendo los gastos negativos
             gastos_frecuentes = df[df['Monto'] > 0].groupby('Descripción')['Monto'].agg(['count', 'sum']).reset_index()
