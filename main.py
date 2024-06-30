@@ -42,12 +42,19 @@ if archivo_excel is not None:
 
         # Continuar con el procesamiento si no hay errores hasta aquí
         if 'Monto' in df.columns:
+            # Convertir la columna 'Cuotas' a numérica
+            df['Cuotas'] = pd.to_numeric(df['Cuotas'], errors='coerce')  # Convertir errores a NaN
+
             # Dividir los montos en cuotas antes de sumarlos
             def sumar_montos_cuotas(row):
                 monto = row['Monto']
                 if pd.isna(monto):  # Manejar casos donde el monto es NaN
                     return 0
                 cuotas = row['Cuotas']
+                if pd.isna(cuotas):  # Manejar casos donde las cuotas son NaN
+                    return 0
+                if cuotas == 0:  # Evitar división por cero
+                    return 0
                 return monto / cuotas
 
             df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
