@@ -35,27 +35,23 @@ if archivo_excel is not None:
                 if pd.isna(monto):  # Manejar casos donde el monto es NaN
                     return 0
                 cuotas = row['Cuotas']
-                if pd.isna(cuotas):  # Manejar casos donde las cuotas son NaN
-                    return 0
-                if cuotas == 0:  # Evitar división por cero
-                    return 0
+                if pd.isna(cuotas) or cuotas == 0:  # Evitar división por cero o cuotas NaN
+                    return monto
                 return monto / cuotas
 
             df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
 
             # Filtrar y sumar los montos positivos (abonos) y los negativos (gastos)
-            abonos = df[df['Monto'] > 0]['Monto']
-            gastos = df[df['Monto'] < 0]['Monto']
+            abonos = df[df['Monto'] > 0]['Monto'].sum()
+            gastos = df[df['Monto'] < 0]['Monto'].sum()
 
             # Calcular el monto restante disponible
-            suma_abonos = abonos.sum()
-            suma_gastos = gastos.sum()
-            monto_restante = monto_disponible - suma_abonos
+            monto_restante = monto_disponible - abonos
 
             # Mostrar resultados formateados
             st.subheader('Resultados')
-            st.write(f'Suma de abonos (positivos): ${suma_abonos:.2f}')
-            st.write(f'Suma de gastos (negativos): ${suma_gastos:.2f}')
+            st.write(f'Suma de abonos (positivos): ${abonos:.2f}')
+            st.write(f'Suma de gastos (negativos): ${gastos:.2f}')
             st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
             # Obtener los gastos más frecuentes y sumarizados
