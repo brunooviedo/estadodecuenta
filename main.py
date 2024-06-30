@@ -15,9 +15,7 @@ if archivo_excel is not None:
     try:
         # Leer el archivo Excel y renombrar columnas si es necesario
         df = pd.read_excel(archivo_excel, skiprows=17, usecols="B:K")
-
-        # Seleccionar solo las columnas necesarias y renombrar según corresponda
-        # df = df[['Fecha', 'Tipo de Tarjeta ', 'Descripción', 'Ciudad', 'Cuotas','Monto ($)']]
+        df = df.rename(columns={df.columns[9]: 'Monto'})
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
@@ -26,7 +24,7 @@ if archivo_excel is not None:
         # Mostrar las columnas originales del DataFrame
         st.write("Columnas originales del archivo:")
         st.write(df.columns.tolist())
-        
+
         st.write("Primer dato de cada columna:")
         for column in df.columns:
             first_value = df[column].iloc[0]  # Obtener el primer dato de la columna
