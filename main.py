@@ -44,25 +44,23 @@ if archivo_excel is not None:
         st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
         # Crear un DataFrame para el gráfico de barras con los índices adecuados
-        df_barras = df.copy()
-        df_barras['Descripcion'] = df_barras.iloc[:, 3]  # Columna 4
-        df_barras['Monto'] = df_barras['Monto']
-        df_barras['Color'] = ['blue' if x > 0 else 'red' for x in df_barras['Monto']]
+        df['Descripcion'] = df.iloc[:, 4]  # Columna E (índice 4)
+        df['Color'] = ['blue' if x > 0 else 'red' for x in df['Monto']]
 
         # Añadir hover text personalizado con la columna 4 y la columna 10
-        df_barras['Hover'] = df_barras.apply(lambda row: f'Info Columna 4: {row.iloc[3]}<br>Gasto: ${row.iloc[10]:.2f}', axis=1)
+        df['Hover'] = df.apply(lambda row: f'Info Columna 4: {row.iloc[4]}<br>Gasto: ${row.iloc[10]:.2f}', axis=1)
 
         # Generar gráfico de barras con colores asignados
-        fig = px.bar(df_barras, x='Descripcion', y='Monto', title='Gastos por Transacción', color='Color', text='Hover')
+        fig = px.bar(df, x='Descripcion', y='Monto', title='Gastos por Transacción', color='Color', text='Hover')
         fig.update_traces(hovertemplate='%{text}')
         st.plotly_chart(fig)
 
-        # Calcular el porcentaje de cada gasto respecto al monto disponible
+        # Filtrar los gastos del DataFrame
         df_gastos = df[df['Monto'] < 0].copy()
-        df_gastos['Porcentaje'] = (df_gastos['Monto'] / suma_gastos) * 100
+        df_gastos['Porcentaje'] = (df_gastos['Monto'] / suma_gastos.abs()) * 100
 
         # Generar gráfico de pastel
-        fig_pie = px.pie(df_gastos, values='Monto', names='Descripcion', title='Distribución de Gastos', 
+        fig_pie = px.pie(df_gastos, values='Monto', names='Descripcion', title='Distribución de Gastos',
                          hover_data=['Porcentaje'], labels={'Monto': 'Monto (CLP)'})
         fig_pie.update_traces(textinfo='percent+label', hovertemplate='Gasto: %{value:.2f}<br>Porcentaje: %{percent:.2%}')
         st.plotly_chart(fig_pie)
