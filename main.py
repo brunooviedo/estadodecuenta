@@ -28,48 +28,57 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
-        # Dividir los montos en cuotas antes de sumarlos
-        def sumar_montos_cuotas(row):
-            monto = row['Monto']
-            if pd.isna(monto):  # Manejar casos donde el monto es NaN
-                return 0
-            cuotas = row['Cuotas']
-            return monto / cuotas
+        # Verificar la presencia de NaN en el DataFrame
+        st.write("Valores NaN en el DataFrame:")
+        st.write(df.isnull().sum())
 
-        df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
+        # Continuar con el procesamiento si no hay errores hasta aquí
+        if 'Monto' in df.columns:
+            # Dividir los montos en cuotas antes de sumarlos
+            def sumar_montos_cuotas(row):
+                monto = row['Monto']
+                if pd.isna(monto):  # Manejar casos donde el monto es NaN
+                    return 0
+                cuotas = row['Cuotas']
+                return monto / cuotas
 
-        # Filtrar y sumar los montos positivos (abonos) y los negativos (gastos)
-        abonos = df[df['Monto'] > 0]['Monto']
-        gastos = df[df['Monto'] < 0]['Monto']
+            df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
 
-        # Calcular el monto restante disponible
-        suma_abonos = abonos.sum()
-        suma_gastos = gastos.sum()
-        monto_restante = monto_disponible - suma_abonos
+            # Filtrar y sumar los montos positivos (abonos) y los negativos (gastos)
+            abonos = df[df['Monto'] > 0]['Monto']
+            gastos = df[df['Monto'] < 0]['Monto']
 
-        # Mostrar resultados formateados
-        st.subheader('Resultados')
-        st.write(f'Suma de abonos (positivos): ${suma_abonos:.2f}')
-        st.write(f'Suma de gastos (negativos): ${suma_gastos:.2f}')
-        st.write(f'Monto restante disponible: ${monto_restante:.2f}')
+            # Calcular el monto restante disponible
+            suma_abonos = abonos.sum()
+            suma_gastos = gastos.sum()
+            monto_restante = monto_disponible - suma_abonos
 
-        # Obtener los gastos más frecuentes y sumarizados
-        gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripcion')['Monto'].count().reset_index()
-        gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Cantidad'})
+            # Mostrar resultados formateados
+            st.subheader('Resultados')
+            st.write(f'Suma de abonos (positivos): ${suma_abonos:.2f}')
+            st.write(f'Suma de gastos (negativos): ${suma_gastos:.2f}')
+            st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
-        # Ordenar por la cantidad de gastos de mayor a menor
-        gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
+            # Obtener los gastos más frecuentes y sumarizados
+            gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripcion')['Monto'].count().reset_index()
+            gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Cantidad'})
 
-        # Generar gráfico de barras horizontales de los gastos más frecuentes
-        fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripcion', orientation='h',
-                                       title='Gastos Más Frecuentes', labels={'Descripcion': 'Descripción'})
-        st.plotly_chart(fig_gastos_frecuentes)
+            # Ordenar por la cantidad de gastos de mayor a menor
+            gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
 
-        # Generar gráfico de pastel con los gastos más frecuentes
-        fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripcion',
-                                           title='Distribución de Gastos Más Frecuentes')
-        fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
-        st.plotly_chart(fig_pie_gastos_frecuentes)
+            # Generar gráfico de barras horizontales de los gastos más frecuentes
+            fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripcion', orientation='h',
+                                           title='Gastos Más Frecuentes', labels={'Descripcion': 'Descripción'})
+            st.plotly_chart(fig_gastos_frecuentes)
+
+            # Generar gráfico de pastel con los gastos más frecuentes
+            fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripcion',
+                                               title='Distribución de Gastos Más Frecuentes')
+            fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
+            st.plotly_chart(fig_pie_gastos_frecuentes)
+
+        else:
+            st.warning("La columna 'Monto' no está presente en el DataFrame.")
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
