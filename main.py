@@ -21,14 +21,8 @@ if archivo_excel is not None:
         st.write("Estructura del archivo:")
         st.write(df.head())
 
-        # Mostrar las columnas originales del DataFrame
-        st.write("Columnas originales del archivo:")
-        st.write(df.columns.tolist())
-
-        st.write("Primer dato de cada columna:")
-        for column in df.columns:
-            first_value = df[column].iloc[0]  # Obtener el primer dato de la columna
-            st.write(f"Columna '{column}': {first_value}")
+        # Seleccionar solo las columnas necesarias y renombrar según corresponda
+        df = df[['Fecha', 'Tipo de Tarjeta', 'Descripcion', 'Ciudad', 'Cuotas', 'Monto']]
 
         # Verificar la presencia de NaN en el DataFrame
         st.write("Valores NaN en el DataFrame:")
