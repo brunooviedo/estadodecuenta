@@ -82,6 +82,9 @@ if archivo_excel is not None:
             # Ordenar por la cantidad de gastos de mayor a menor
             gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
 
+            # Limitar a los 15 gastos más frecuentes
+            gastos_frecuentes = gastos_frecuentes.head(15)
+
             # Generar gráfico de barras horizontales de los gastos más frecuentes por cantidad
             fig_gastos_frecuentes_cantidad = px.bar(gastos_frecuentes, x='Cantidad', y='Descripción', orientation='h',
                                                     title='Gastos Más Frecuentes por Cantidad', labels={'Descripción': 'Descripción'})
