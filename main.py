@@ -29,7 +29,7 @@ if archivo_excel is not None:
         st.write(df.isnull().sum())
 
         # Expander para mostrar detalles del DataFrame
-        with st.beta_expander("Ver detalles del DataFrame"):
+        with st.expander("Ver detalles del DataFrame"):
             # Mostrar las columnas originales del DataFrame
             st.write("Columnas originales del archivo:")
             st.write(df.columns.tolist())
