@@ -43,27 +43,23 @@ if archivo_excel is not None:
         st.write(f'Suma de gastos (negativos): ${suma_gastos:.2f}')
         st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
-        # Crear un DataFrame para el gráfico de barras con los índices adecuados
-        df['Descripcion'] = df.iloc[:, 1]  # Columna B (índice 1)
-        df['Color'] = ['blue' if x > 0 else 'red' for x in df['Monto']]
+        # Obtener los gastos más frecuentes y sumarizados
+        gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripcion')['Monto'].count().reset_index()
+        gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Cantidad'})
 
-        # Añadir hover text personalizado con la columna 4 y la columna 10
-        df['Hover'] = df.apply(lambda row: f'Fecha: {row.iloc[1]}<br>Gasto: ${row.iloc[10]:.2f}', axis=1)
+        # Ordenar por la cantidad de gastos de mayor a menor
+        gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
 
-        # Generar gráfico de barras con colores asignados
-        fig = px.bar(df, x='Descripcion', y='Monto', title='Gastos por Transacción', color='Color', text='Hover')
-        fig.update_traces(hovertemplate='%{text}')
-        st.plotly_chart(fig)
+        # Generar gráfico de barras horizontales de los gastos más frecuentes
+        fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripcion', orientation='h',
+                                       title='Gastos Más Frecuentes', labels={'Descripcion': 'Descripción'})
+        st.plotly_chart(fig_gastos_frecuentes)
 
-        # Calcular el porcentaje de cada gasto respecto al monto total de gastos
-        df_gastos = df[df['Monto'] < 0].copy()
-        df_gastos['Porcentaje'] = (df_gastos['Monto'] / suma_gastos) * 100
-
-        # Generar gráfico de pastel
-        fig_pie = px.pie(df_gastos, values='Monto', names='Descripcion', title='Distribución de Gastos',
-                         hover_data=['Porcentaje'], labels={'Monto': 'Monto (CLP)'})
-        fig_pie.update_traces(textinfo='percent+label', hovertemplate='Gasto: %{value:.2f}<br>Porcentaje: %{percent:.2%}')
-        st.plotly_chart(fig_pie)
+        # Generar gráfico de pastel con los gastos más frecuentes
+        fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripcion',
+                                           title='Distribución de Gastos Más Frecuentes')
+        fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
+        st.plotly_chart(fig_pie_gastos_frecuentes)
 
     except Exception as e:
         st.error(f'Ocurrió un error al procesar el archivo: {e}')
