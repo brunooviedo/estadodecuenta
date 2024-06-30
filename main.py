@@ -14,7 +14,10 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 if archivo_excel is not None:
     try:
         # Leer el archivo Excel y renombrar columnas
-        df = pd.read_excel(archivo_excel, skiprows=18, names=['Fecha', 'Descripcion', 'Monto'])
+        df = pd.read_excel(archivo_excel, skiprows=18, names=['Fecha', 'Descripcion', 'Monto'], usecols="B:E")
+
+        # Renombrar específicamente la columna B a 'Fecha'
+        df = df.rename(columns={'B': 'Fecha'})
 
         # Mostrar las primeras filas para verificar la estructura del archivo
         st.write("Estructura del archivo:")
