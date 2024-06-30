@@ -13,7 +13,7 @@ archivo_excel = st.file_uploader("Cargar archivo Excel", type=["xlsx", "xls"])
 
 if archivo_excel is not None:
     try:
-        # Leer el archivo Excel con el motor predeterminado (xlrd)
+        # Leer el archivo Excel
         df = pd.read_excel(archivo_excel, skiprows=18)  # Saltar las primeras 18 filas
 
         # Mostrar las primeras filas para verificar la estructura del archivo
@@ -28,12 +28,9 @@ if archivo_excel is not None:
 
         df['Monto'] = df.apply(sumar_montos_cuotas, axis=1)
 
-        # Obtener la columna de montos
-        montos = df['Monto']
-
         # Filtrar y sumar los montos positivos (abonos) y los negativos (gastos)
-        abonos = montos[montos > 0]
-        gastos = montos[montos < 0]
+        abonos = df[df['Monto'] > 0]['Monto']
+        gastos = df[df['Monto'] < 0]['Monto']
 
         # Calcular el monto restante disponible
         suma_abonos = abonos.sum()
@@ -46,25 +43,26 @@ if archivo_excel is not None:
         st.write(f'Suma de gastos (negativos): ${suma_gastos:.2f}')
         st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
-        # Asignar colores a los abonos (azul) y gastos (rojo)
-        colors = ['blue' if x > 0 else 'red' for x in df['Monto']]
+        # Crear un DataFrame para el gráfico de barras con los índices adecuados
+        df_barras = df.copy()
+        df_barras['Descripcion'] = df_barras.iloc[:, 3]  # Columna 4
+        df_barras['Monto'] = df_barras['Monto']
+        df_barras['Color'] = ['blue' if x > 0 else 'red' for x in df_barras['Monto']]
 
         # Añadir hover text personalizado con la columna 4 y la columna 10
-        hover_text = [f'Info Columna 4: {row.iloc[3]}<br>Gasto: ${row.iloc[10]:.2f}' for index, row in df.iterrows()]
+        df_barras['Hover'] = df_barras.apply(lambda row: f'Info Columna 4: {row.iloc[3]}<br>Gasto: ${row.iloc[10]:.2f}', axis=1)
 
         # Generar gráfico de barras con colores asignados
-        fig = px.bar(df, x=df.index, y='Monto', title='Gastos por Transacción', color=colors, text=hover_text)
+        fig = px.bar(df_barras, x='Descripcion', y='Monto', title='Gastos por Transacción', color='Color', text='Hover')
         fig.update_traces(hovertemplate='%{text}')
         st.plotly_chart(fig)
 
-        # Filtrar los gastos del DataFrame
-        df_gastos = df[df['Monto'] < 0]
-
         # Calcular el porcentaje de cada gasto respecto al monto disponible
-        df_gastos['Porcentaje'] = (df_gastos['Monto'] / monto_disponible) * 100
+        df_gastos = df[df['Monto'] < 0].copy()
+        df_gastos['Porcentaje'] = (df_gastos['Monto'] / suma_gastos) * 100
 
         # Generar gráfico de pastel
-        fig_pie = px.pie(df_gastos, values='Monto', names=df_gastos.index, title='Distribución de Gastos',
+        fig_pie = px.pie(df_gastos, values='Monto', names='Descripcion', title='Distribución de Gastos', 
                          hover_data=['Porcentaje'], labels={'Monto': 'Monto (CLP)'})
         fig_pie.update_traces(textinfo='percent+label', hovertemplate='Gasto: %{value:.2f}<br>Porcentaje: %{percent:.2%}')
         st.plotly_chart(fig_pie)
