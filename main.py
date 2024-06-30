@@ -28,6 +28,18 @@ if archivo_excel is not None:
         st.write("Valores NaN en el DataFrame:")
         st.write(df.isnull().sum())
 
+        # Expander para mostrar detalles del DataFrame
+        with st.beta_expander("Ver detalles del DataFrame"):
+            # Mostrar las columnas originales del DataFrame
+            st.write("Columnas originales del archivo:")
+            st.write(df.columns.tolist())
+            
+            # Mostrar el primer dato de cada columna del DataFrame
+            st.write("Primer dato de cada columna:")
+            for column in df.columns:
+                first_value = df[column].iloc[0]  # Obtener el primer dato de la columna
+                st.write(f"Columna '{column}': {first_value}")
+
         # Continuar con el procesamiento si no hay errores hasta aquí
         if 'Monto' in df.columns:
             # Dividir los montos en cuotas antes de sumarlos
@@ -56,19 +68,19 @@ if archivo_excel is not None:
             st.write(f'Monto restante disponible: ${monto_restante:.2f}')
 
             # Obtener los gastos más frecuentes y sumarizados
-            gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripcion')['Monto'].count().reset_index()
+            gastos_frecuentes = df[df['Monto'] < 0].groupby('Descripción')['Monto'].count().reset_index()
             gastos_frecuentes = gastos_frecuentes.rename(columns={'Monto': 'Cantidad'})
 
             # Ordenar por la cantidad de gastos de mayor a menor
             gastos_frecuentes = gastos_frecuentes.sort_values(by='Cantidad', ascending=False)
 
             # Generar gráfico de barras horizontales de los gastos más frecuentes
-            fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripcion', orientation='h',
-                                           title='Gastos Más Frecuentes', labels={'Descripcion': 'Descripción'})
+            fig_gastos_frecuentes = px.bar(gastos_frecuentes, x='Cantidad', y='Descripción', orientation='h',
+                                           title='Gastos Más Frecuentes', labels={'Descripción': 'Descripción'})
             st.plotly_chart(fig_gastos_frecuentes)
 
             # Generar gráfico de pastel con los gastos más frecuentes
-            fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripcion',
+            fig_pie_gastos_frecuentes = px.pie(gastos_frecuentes, values='Cantidad', names='Descripción',
                                                title='Distribución de Gastos Más Frecuentes')
             fig_pie_gastos_frecuentes.update_traces(textinfo='percent+label')
             st.plotly_chart(fig_pie_gastos_frecuentes)
